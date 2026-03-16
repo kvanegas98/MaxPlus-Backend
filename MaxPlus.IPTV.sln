@@ -1,0 +1,48 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{633FEC39-EAA7-4AD6-B292-973D8F47D523}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxPlus.IPTV.WebAPI", "src\MaxPlus.IPTV.WebAPI\MaxPlus.IPTV.WebAPI.csproj", "{3DCE3AA3-8A47-4010-B139-07F1AFE2338F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxPlus.IPTV.Core", "src\MaxPlus.IPTV.Core\MaxPlus.IPTV.Core.csproj", "{14400D71-195A-41BD-A32D-2FB1580D2AEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxPlus.IPTV.Application", "src\MaxPlus.IPTV.Application\MaxPlus.IPTV.Application.csproj", "{02E8EF4D-719D-41AB-B460-881F27EDE606}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxPlus.IPTV.Infrastructure", "src\MaxPlus.IPTV.Infrastructure\MaxPlus.IPTV.Infrastructure.csproj", "{22D83514-984F-46DA-8D06-A1BAF0D9C474}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DCE3AA3-8A47-4010-B139-07F1AFE2338F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DCE3AA3-8A47-4010-B139-07F1AFE2338F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DCE3AA3-8A47-4010-B139-07F1AFE2338F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DCE3AA3-8A47-4010-B139-07F1AFE2338F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14400D71-195A-41BD-A32D-2FB1580D2AEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14400D71-195A-41BD-A32D-2FB1580D2AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14400D71-195A-41BD-A32D-2FB1580D2AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14400D71-195A-41BD-A32D-2FB1580D2AEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02E8EF4D-719D-41AB-B460-881F27EDE606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02E8EF4D-719D-41AB-B460-881F27EDE606}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02E8EF4D-719D-41AB-B460-881F27EDE606}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02E8EF4D-719D-41AB-B460-881F27EDE606}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D83514-984F-46DA-8D06-A1BAF0D9C474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D83514-984F-46DA-8D06-A1BAF0D9C474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D83514-984F-46DA-8D06-A1BAF0D9C474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D83514-984F-46DA-8D06-A1BAF0D9C474}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3DCE3AA3-8A47-4010-B139-07F1AFE2338F} = {633FEC39-EAA7-4AD6-B292-973D8F47D523}
+		{14400D71-195A-41BD-A32D-2FB1580D2AEE} = {633FEC39-EAA7-4AD6-B292-973D8F47D523}
+		{02E8EF4D-719D-41AB-B460-881F27EDE606} = {633FEC39-EAA7-4AD6-B292-973D8F47D523}
+		{22D83514-984F-46DA-8D06-A1BAF0D9C474} = {633FEC39-EAA7-4AD6-B292-973D8F47D523}
+	EndGlobalSection
+EndGlobal

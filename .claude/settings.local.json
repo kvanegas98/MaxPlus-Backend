@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet add package MailKit --version 4.9.0)",
+      "Bash(dotnet build --no-restore -v minimal)",
+      "Bash(dotnet add package Microsoft.Extensions.Options --version 8.0.0)",
+      "Bash(sed -i 's|builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>\\(\\);|builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>\\(\\);\\\\nbuilder.Services.AddScoped<ISystemLogRepository,     SystemLogRepository>\\(\\);|' \"c:/Sistemas/MaxPlus-Backend/src/MaxPlus.IPTV.WebAPI/Program.cs\")",
+      "Bash(sed -i 's|builder.Services.AddHostedService<DailyReportBackgroundService>\\(\\);|builder.Services.AddHostedService<DailyReportBackgroundService>\\(\\);\\\\nbuilder.Services.AddHostedService<SubscriptionJobBackgroundService>\\(\\);|' \"c:/Sistemas/MaxPlus-Backend/src/MaxPlus.IPTV.WebAPI/Program.cs\")",
+      "Bash(sed -i 's|builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>\\(\\);|builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>\\(\\);\\\\nbuilder.Services.AddScoped<ISubscriptionJobService, SubscriptionJobService>\\(\\);|' \"c:/Sistemas/MaxPlus-Backend/src/MaxPlus.IPTV.WebAPI/Program.cs\")",
+      "Bash(dotnet build src/MaxPlus.IPTV.WebAPI/MaxPlus.IPTV.WebAPI.csproj)",
+      "Bash(\"c:/Sistemas/MaxPlus-Backend/SQL/Subscriptions_Unassigned.sql\":*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet run:*)",
+      "Bash(taskkill /F /IM \"MaxPlus.IPTV.WebAPI.exe\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":7244 \")",
+      "Bash(\"c:/Sistemas/MaxPlus-Backend/facturas/.gitkeep\")",
+      "WebFetch(domain:www.twilio.com)",
+      "WebSearch",
+      "WebFetch(domain:ultramsg.com)",
+      "WebFetch(domain:blog.ultramsg.com)",
+      "WebFetch(domain:green-api.com)"
+    ]
+  }
+}

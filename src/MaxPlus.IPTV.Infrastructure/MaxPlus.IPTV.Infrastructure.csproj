@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaxPlus.IPTV.Core\MaxPlus.IPTV.Core.csproj" />
+    <ProjectReference Include="..\MaxPlus.IPTV.Application\MaxPlus.IPTV.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="MailKit" Version="4.9.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="QuestPDF" Version="2202.8.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.3" />
+    <PackageReference Include="PDFtoImage" Version="4.0.0" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.9" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
