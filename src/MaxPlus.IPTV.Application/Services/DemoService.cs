@@ -12,16 +12,19 @@ public class DemoService : IDemoService
     private readonly IDemoRequestRepository  _repository;
     private readonly IIptvPanelClientService _panelClient;
     private readonly IWhatsAppService        _whatsApp;
+    private readonly IEmailService           _email;
     private readonly IConfiguration          _config;
 
     public DemoService(IDemoRequestRepository  repository,
                        IIptvPanelClientService panelClient,
                        IWhatsAppService        whatsApp,
+                       IEmailService           email,
                        IConfiguration          config)
     {
         _repository  = repository;
         _panelClient = panelClient;
         _whatsApp    = whatsApp;
+        _email       = email;
         _config      = config;
     }
 
@@ -62,17 +65,32 @@ public class DemoService : IDemoService
         string htmlRes = $"<ul><li><strong>Usuario:</strong> {panelResponse.Username}</li><li><strong>Contraseña:</strong> {panelResponse.Password}</li><li><strong>URL:</strong> {panelHost}</li></ul>";
         await _repository.ApproveAsync(request.Id, null, panelHost, htmlRes);
 
-        // 4. Enviar credenciales por WhatsApp
-        try
-        {
-            await _whatsApp.SendDemoCredentialsAsync(
-                request.CustomerPhone, request.CustomerName,
-                panelResponse.Username, panelResponse.Password, panelHost);
-        }
-        catch { /* No bloquear si falla WhatsApp */ }
-
         var updated = await _repository.GetByIdAsync(request.Id);
-        return updated is null ? MapToDto(request) : MapToDto(updated);
+        var result  = updated is null ? MapToDto(request) : MapToDto(updated);
+
+        var customerName  = request.CustomerName;
+        var customerPhone = request.CustomerPhone;
+        var customerEmail = request.CustomerEmail;
+        var username      = panelResponse.Username;
+        var password      = panelResponse.Password;
+        var adminEmails   = _config.GetSection("EmailSettings:ReportRecipients")
+                                   .GetChildren().Select(x => x.Value).Where(x => x != null).Cast<string>().ToList();
+
+        _ = Task.Run(async () =>
+        {
+            try { await _whatsApp.SendDemoCredentialsAsync(customerPhone, customerName, username, password, panelHost); }
+            catch { }
+
+            if (!string.IsNullOrWhiteSpace(customerEmail))
+                try { await _email.SendDemoCredentialsAsync(customerEmail, customerName, username, password, panelHost); }
+                catch { }
+
+            if (adminEmails?.Count > 0)
+                try { await _email.SendDemoNotificationAsync(adminEmails, customerName, customerPhone, customerEmail, null); }
+                catch { }
+        });
+
+        return result;
     }
 
     public async Task<DemoRequestResponseDto?> VerifyPhoneAsync(Guid id, string code)

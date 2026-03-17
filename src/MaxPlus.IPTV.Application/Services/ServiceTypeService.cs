@@ -24,6 +24,12 @@ public class ServiceTypeService : IServiceTypeService
         return services.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<ServiceTypeDto>> GetCatalogoAsync()
+    {
+        var services = await _repository.GetCatalogoAsync();
+        return services.Select(MapToDto);
+    }
+
     public async Task<ServiceTypeDto?> GetByIdAsync(Guid id)
     {
         var serviceType = await _repository.GetByIdAsync(id);
@@ -63,6 +69,7 @@ public class ServiceTypeService : IServiceTypeService
         existingService.Category      = dto.Category;
         existingService.Plataforma    = dto.Plataforma;
         existingService.ImageUrl      = dto.ImageUrl;
+        existingService.IsActive      = dto.IsActive;
 
         await _repository.UpdateAsync(existingService);
     }
@@ -74,6 +81,15 @@ public class ServiceTypeService : IServiceTypeService
             throw new KeyNotFoundException("Tipo de servicio no encontrado.");
 
         await _repository.DeactivateAsync(id);
+    }
+
+    public async Task DeleteAsync(Guid id, string? deletedBy = null)
+    {
+        var existingService = await _repository.GetByIdAsync(id);
+        if (existingService == null)
+            throw new KeyNotFoundException("Tipo de servicio no encontrado.");
+
+        await _repository.DeleteAsync(id, deletedBy);
     }
 
     public async Task<IEnumerable<PlataformaConfigDto>> GetPlataformasConfigAsync()

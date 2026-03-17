@@ -33,4 +33,6 @@ public class ServiceTypeUpdateDto
 
     [MaxLength(500)]
     public string? ImageUrl { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

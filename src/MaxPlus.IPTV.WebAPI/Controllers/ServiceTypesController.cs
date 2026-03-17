@@ -33,13 +33,24 @@ public class ServiceTypesController : ControllerBase
     }
 
     /// <summary>
-    /// Obtiene todos los tipos de servicio del catálogo activos. (Público)
+    /// Obtiene todos los tipos de servicio (admin). Requiere token.
     /// </summary>
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ServiceTypeDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Catálogo público — solo servicios activos, sin token.
+    /// </summary>
+    [HttpGet("catalogo")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<ServiceTypeDto>>> GetCatalogo()
+    {
+        var result = await _service.GetCatalogoAsync();
         return Ok(result);
     }
 
@@ -103,11 +114,12 @@ public class ServiceTypesController : ControllerBase
     /// </summary>
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Deactivate(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            await _service.DeactivateAsync(id);
+            var deletedBy = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            await _service.DeleteAsync(id, deletedBy);
             return NoContent();
         }
         catch (KeyNotFoundException ex)

@@ -22,6 +22,14 @@ public class ServiceTypeRepository : IServiceTypeRepository
             commandType: CommandType.StoredProcedure);
     }
 
+    public async Task<IEnumerable<ServiceType>> GetCatalogoAsync()
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        return await connection.QueryAsync<ServiceType>(
+            "sp_TiposServicio_ObtenerCatalogo",
+            commandType: CommandType.StoredProcedure);
+    }
+
     public async Task<ServiceType?> GetByIdAsync(Guid id)
     {
         using var connection = _connectionFactory.CreateConnection();
@@ -68,7 +76,8 @@ public class ServiceTypeRepository : IServiceTypeRepository
                 DurationDays = serviceType.DurationDays,
                 Category     = serviceType.Category,
                 Plataforma   = serviceType.Plataforma,
-                ImageUrl     = serviceType.ImageUrl
+                ImageUrl     = serviceType.ImageUrl,
+                IsActive     = serviceType.IsActive
             },
             commandType: CommandType.StoredProcedure);
     }
@@ -79,6 +88,15 @@ public class ServiceTypeRepository : IServiceTypeRepository
         await connection.ExecuteAsync(
             "sp_TiposServicio_Desactivar",
             new { Id = id },
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task DeleteAsync(Guid id, string? deletedBy = null)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.ExecuteAsync(
+            "sp_TiposServicio_Eliminar",
+            new { Id = id, DeletedBy = deletedBy },
             commandType: CommandType.StoredProcedure);
     }
 }

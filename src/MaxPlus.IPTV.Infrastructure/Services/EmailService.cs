@@ -23,15 +23,34 @@ public class EmailService : IEmailService
         foreach (var email in toEmails)
             message.To.Add(MailboxAddress.Parse(email));
         message.Subject = subject;
-
         message.Body = new BodyBuilder { HtmlBody = htmlBody }.ToMessageBody();
 
         using var client = new SmtpClient();
-
         var secureOption = _settings.UseSsl
             ? SecureSocketOptions.SslOnConnect
             : SecureSocketOptions.StartTls;
+        await client.ConnectAsync(_settings.Host, _settings.Port, secureOption);
+        await client.AuthenticateAsync(_settings.Username, _settings.Password);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
 
+    private async Task SendWithBccAsync(string toEmail, IEnumerable<string>? bccEmails, string subject, string htmlBody)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(_settings.FromName, _settings.FromEmail));
+        message.To.Add(MailboxAddress.Parse(toEmail));
+        if (bccEmails != null)
+            foreach (var bcc in bccEmails)
+                if (!string.IsNullOrWhiteSpace(bcc))
+                    message.Bcc.Add(MailboxAddress.Parse(bcc));
+        message.Subject = subject;
+        message.Body = new BodyBuilder { HtmlBody = htmlBody }.ToMessageBody();
+
+        using var client = new SmtpClient();
+        var secureOption = _settings.UseSsl
+            ? SecureSocketOptions.SslOnConnect
+            : SecureSocketOptions.StartTls;
         await client.ConnectAsync(_settings.Host, _settings.Port, secureOption);
         await client.AuthenticateAsync(_settings.Username, _settings.Password);
         await client.SendAsync(message);
@@ -99,6 +118,75 @@ public class EmailService : IEmailService
             ? $"Renovación de servicio: {serviceName}"
             : $"Credenciales de acceso: {serviceName}";
 
-        return SendAsync([toEmail], subject, html);
+        return SendWithBccAsync(toEmail, _settings.ReportRecipients, subject, html);
+    }
+
+    public Task SendDemoCredentialsAsync(string toEmail, string customerName,
+        string accessUser, string accessPassword, string platformUrl)
+    {
+        var html = $@"<!DOCTYPE html>
+<html>
+<head><meta charset=""utf-8""/></head>
+<body style=""margin:0;padding:0;background:#0D0B1E;font-family:Arial,sans-serif;"">
+  <table width=""100%"" cellpadding=""0"" cellspacing=""0"">
+    <tr><td align=""center"" style=""padding:32px 16px;"">
+      <table width=""480"" cellpadding=""0"" cellspacing=""0"" style=""background:#1A1535;border-radius:12px;overflow:hidden;"">
+        <tr><td style=""background:#8B5CF6;padding:24px 32px;"">
+          <h1 style=""margin:0;color:#fff;font-size:20px;"">MaxPlus IPTV</h1>
+          <p style=""margin:6px 0 0;color:#e0d7ff;font-size:14px;"">🎬 Tu demo está lista</p>
+        </td></tr>
+        <tr><td style=""padding:28px 32px;color:#fff;"">
+          <p style=""margin:0 0 20px"">Hola <strong>{customerName}</strong>, aquí están tus credenciales de prueba:</p>
+          <table width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""font-size:15px;"">
+            <tr><td style=""color:#aaa;padding:4px 0"">Usuario</td><td style=""color:#fff;font-weight:600"">{accessUser}</td></tr>
+            <tr><td style=""color:#aaa;padding:4px 0"">Contraseña</td><td style=""color:#fff;font-weight:600"">{accessPassword}</td></tr>
+            <tr><td style=""color:#aaa;padding:4px 0"">URL</td><td style=""color:#10B981;font-weight:600"">{platformUrl}</td></tr>
+          </table>
+          <p style=""margin:20px 0 0;font-size:13px;color:#888;"">Esta demo es válida por tiempo limitado. Si tienes problemas contáctanos por WhatsApp.</p>
+        </td></tr>
+        <tr><td style=""background:#0D0B1E;padding:16px 32px;text-align:center;"">
+          <p style=""margin:0;color:#555;font-size:12px;"">MaxPlus IPTV &bull; Este es un correo automático.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>";
+
+        return SendAsync([toEmail], "🎬 Tus credenciales de demo — MaxPlus IPTV", html);
+    }
+
+    public Task SendDemoNotificationAsync(IEnumerable<string> adminEmails,
+        string customerName, string customerPhone, string? customerEmail, string? serviceName)
+    {
+        var html = $@"<!DOCTYPE html>
+<html>
+<head><meta charset=""utf-8""/></head>
+<body style=""margin:0;padding:0;background:#0D0B1E;font-family:Arial,sans-serif;"">
+  <table width=""100%"" cellpadding=""0"" cellspacing=""0"">
+    <tr><td align=""center"" style=""padding:32px 16px;"">
+      <table width=""480"" cellpadding=""0"" cellspacing=""0"" style=""background:#1A1535;border-radius:12px;overflow:hidden;"">
+        <tr><td style=""background:#FF6B00;padding:24px 32px;"">
+          <h1 style=""margin:0;color:#fff;font-size:20px;"">MaxPlus IPTV</h1>
+          <p style=""margin:6px 0 0;color:#ffe0cc;font-size:14px;"">⚡ Nueva solicitud de demo</p>
+        </td></tr>
+        <tr><td style=""padding:28px 32px;color:#fff;"">
+          <table width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""font-size:15px;"">
+            <tr><td style=""color:#aaa;padding:4px 0"">Cliente</td><td style=""color:#fff;font-weight:600"">{customerName}</td></tr>
+            <tr><td style=""color:#aaa;padding:4px 0"">Teléfono</td><td style=""color:#fff;font-weight:600"">{customerPhone}</td></tr>
+            <tr><td style=""color:#aaa;padding:4px 0"">Correo</td><td style=""color:#fff;font-weight:600"">{customerEmail ?? "No proporcionado"}</td></tr>
+            <tr><td style=""color:#aaa;padding:4px 0"">Servicio</td><td style=""color:#8B5CF6;font-weight:600"">{serviceName ?? "No especificado"}</td></tr>
+          </table>
+        </td></tr>
+        <tr><td style=""background:#0D0B1E;padding:16px 32px;text-align:center;"">
+          <p style=""margin:0;color:#555;font-size:12px;"">MaxPlus IPTV &bull; Notificación automática.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>";
+
+        return SendAsync(adminEmails, "⚡ Nueva solicitud de demo — MaxPlus IPTV", html);
     }
 }

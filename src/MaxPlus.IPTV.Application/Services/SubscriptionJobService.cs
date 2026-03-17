@@ -100,6 +100,10 @@ public class SubscriptionJobService : ISubscriptionJobService
                     $"Error al notificar suscripción {sub.Id} ({sub.CustomerPhone}).",
                     ex.ToString());
             }
+
+            // Delay aleatorio entre mensajes para evitar baneo de WhatsApp
+            var delayMs = Random.Shared.Next(4000, 10000);
+            await Task.Delay(delayMs, ct);
         }
     }
 

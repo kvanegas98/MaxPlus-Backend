@@ -13,4 +13,12 @@ public interface IEmailService
         string labelUsuario, string? platformUrl = null,
         string? profileUser = null, string? profilePin = null,
         bool isRenewal = false);
+
+    // Envía credenciales de demo al cliente
+    Task SendDemoCredentialsAsync(string toEmail, string customerName,
+        string accessUser, string accessPassword, string platformUrl);
+
+    // Notifica a los admins que llegó una nueva solicitud de demo
+    Task SendDemoNotificationAsync(IEnumerable<string> adminEmails,
+        string customerName, string customerPhone, string? customerEmail, string? serviceName);
 }
