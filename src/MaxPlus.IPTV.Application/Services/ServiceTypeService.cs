@@ -30,6 +30,21 @@ public class ServiceTypeService : IServiceTypeService
         return services.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<CatalogoAgrupadoDto>> GetCatalogoAgrupadoAsync()
+    {
+        var services = await _repository.GetCatalogoAsync();
+        return services
+            .GroupBy(s => new { s.CategoriaId, s.CategoriaNombre, s.CategoriaColor })
+            .OrderBy(g => g.Key.CategoriaNombre ?? "zzz")
+            .Select(g => new CatalogoAgrupadoDto
+            {
+                CategoriaId     = g.Key.CategoriaId,
+                CategoriaNombre = g.Key.CategoriaNombre ?? "Sin categoría",
+                CategoriaColor  = g.Key.CategoriaColor  ?? "#8B5CF6",
+                Servicios       = g.Select(MapToDto).ToList()
+            });
+    }
+
     public async Task<ServiceTypeDto?> GetByIdAsync(Guid id)
     {
         var serviceType = await _repository.GetByIdAsync(id);
@@ -48,6 +63,7 @@ public class ServiceTypeService : IServiceTypeService
             Category      = dto.Category,
             Plataforma    = dto.Plataforma,
             ImageUrl      = dto.ImageUrl,
+            CategoriaId   = dto.CategoriaId,
             IsActive      = true,
             CreatedAt     = DateTime.UtcNow
         };
@@ -70,6 +86,7 @@ public class ServiceTypeService : IServiceTypeService
         existingService.Plataforma    = dto.Plataforma;
         existingService.ImageUrl      = dto.ImageUrl;
         existingService.IsActive      = dto.IsActive;
+        existingService.CategoriaId   = dto.CategoriaId;
 
         await _repository.UpdateAsync(existingService);
     }
@@ -123,8 +140,11 @@ public class ServiceTypeService : IServiceTypeService
         PurchasePrice = entity.PurchasePrice,
         DurationDays  = entity.DurationDays,
         Category      = entity.Category,
-        Plataforma    = entity.Plataforma,
-        ImageUrl      = entity.ImageUrl,
-        IsActive      = entity.IsActive
+        Plataforma      = entity.Plataforma,
+        ImageUrl        = entity.ImageUrl,
+        IsActive        = entity.IsActive,
+        CategoriaId     = entity.CategoriaId,
+        CategoriaNombre = entity.CategoriaNombre,
+        CategoriaColor  = entity.CategoriaColor
     };
 }

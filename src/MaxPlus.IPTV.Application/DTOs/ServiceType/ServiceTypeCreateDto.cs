@@ -32,5 +32,7 @@ public class ServiceTypeCreateDto
     public string Plataforma { get; set; } = "IPTV"; // IPTV | FlujoTV | Netflix | Otro
 
     [MaxLength(500)]
-    public string? ImageUrl { get; set; }
+    public string? ImageUrl    { get; set; }
+
+    public Guid?   CategoriaId { get; set; }
 }

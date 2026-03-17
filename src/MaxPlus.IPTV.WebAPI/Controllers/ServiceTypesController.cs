@@ -55,6 +55,17 @@ public class ServiceTypesController : ControllerBase
     }
 
     /// <summary>
+    /// Catálogo público agrupado por categoría — para menú digital.
+    /// </summary>
+    [HttpGet("catalogo/agrupado")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<CatalogoAgrupadoDto>>> GetCatalogoAgrupado()
+    {
+        var result = await _service.GetCatalogoAgrupadoAsync();
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Obtiene un tipo de servicio por su Id único.
     /// </summary>
     [HttpGet("{id:guid}")]

@@ -15,6 +15,9 @@ public class ServiceType
     public string   Category     { get; set; } = "Paid";  // Paid | Demo
     public string   Plataforma   { get; set; } = "IPTV"; // IPTV | FlujoTV | Netflix | Streaming
     public string?  ImageUrl     { get; set; }
-    public bool     IsActive     { get; set; } = true;
-    public DateTime CreatedAt    { get; set; }
+    public bool     IsActive        { get; set; } = true;
+    public DateTime CreatedAt       { get; set; }
+    public Guid?    CategoriaId     { get; set; }
+    public string?  CategoriaNombre { get; set; }
+    public string?  CategoriaColor  { get; set; }
 }

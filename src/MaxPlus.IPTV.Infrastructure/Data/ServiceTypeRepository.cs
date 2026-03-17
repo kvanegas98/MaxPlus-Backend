@@ -51,6 +51,7 @@ public class ServiceTypeRepository : IServiceTypeRepository
         parameters.Add("@Category",     serviceType.Category);
         parameters.Add("@Plataforma",   serviceType.Plataforma);
         parameters.Add("@ImageUrl",     serviceType.ImageUrl);
+        parameters.Add("@CategoriaId",  serviceType.CategoriaId);
         parameters.Add("@Id",           dbType: DbType.Guid, direction: ParameterDirection.Output);
 
         await connection.ExecuteAsync(
@@ -77,7 +78,8 @@ public class ServiceTypeRepository : IServiceTypeRepository
                 Category     = serviceType.Category,
                 Plataforma   = serviceType.Plataforma,
                 ImageUrl     = serviceType.ImageUrl,
-                IsActive     = serviceType.IsActive
+                IsActive     = serviceType.IsActive,
+                CategoriaId  = serviceType.CategoriaId
             },
             commandType: CommandType.StoredProcedure);
     }
