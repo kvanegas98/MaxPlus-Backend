@@ -84,4 +84,47 @@ public class OrderRepository : IOrderRepository
             parameters,
             commandType: CommandType.StoredProcedure);
     }
+
+    public async Task<Guid> AddItemAsync(ServiceOrderItem item)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@ServiceOrderId", item.ServiceOrderId);
+        parameters.Add("@TipoServicioId", item.TipoServicioId);
+        parameters.Add("@DurationMonths", item.DurationMonths);
+        parameters.Add("@Cantidad",       item.Cantidad);
+        parameters.Add("@UnitPrice",      item.UnitPrice);
+        parameters.Add("@SubTotal",       item.SubTotal);
+        parameters.Add("@Id", dbType: DbType.Guid, direction: ParameterDirection.Output);
+
+        await connection.ExecuteAsync(
+            "sp_ServiceOrderItems_Crear",
+            parameters,
+            commandType: CommandType.StoredProcedure);
+
+        return parameters.Get<Guid>("@Id");
+    }
+
+    public async Task<IEnumerable<ServiceOrderItem>> GetItemsByOrderIdAsync(Guid orderId)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@ServiceOrderId", orderId);
+        return await connection.QueryAsync<ServiceOrderItem>(
+            "sp_ServiceOrderItems_ObtenerPorOrden",
+            parameters,
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task AssignItemSubscriptionAsync(Guid itemId, Guid subscriptionId)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id",             itemId);
+        parameters.Add("@SubscriptionId", subscriptionId);
+        await connection.ExecuteAsync(
+            "sp_ServiceOrderItems_AsignarSuscripcion",
+            parameters,
+            commandType: CommandType.StoredProcedure);
+    }
 }

@@ -33,11 +33,12 @@ public class SubscriptionsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>Lista suscripciones sin cliente asignado (Unassigned).</summary>
+    /// <summary>Lista suscripciones sin cliente asignado. Filtrar por tipoServicioId para el selector de la factura.</summary>
     [HttpGet("unassigned")]
-    public async Task<ActionResult<IEnumerable<CustomerSubscriptionResponseDto>>> GetUnassigned()
+    public async Task<ActionResult<IEnumerable<CustomerSubscriptionResponseDto>>> GetUnassigned(
+        [FromQuery] Guid? tipoServicioId = null)
     {
-        var result = await _service.GetUnassignedAsync();
+        var result = await _service.GetUnassignedAsync(tipoServicioId);
         return Ok(result);
     }
 

@@ -6,7 +6,7 @@ public interface ICustomerSubscriptionService
 {
     Task<IEnumerable<CustomerSubscriptionResponseDto>> GetByCustomerIdAsync(Guid customerId);
     Task<IEnumerable<CustomerSubscriptionResponseDto>> GetActiveAsync();
-    Task<IEnumerable<CustomerSubscriptionResponseDto>> GetUnassignedAsync();
+    Task<IEnumerable<CustomerSubscriptionResponseDto>> GetUnassignedAsync(Guid? tipoServicioId = null);
     Task<CustomerSubscriptionResponseDto>              CreateAsync(CustomerSubscriptionCreateDto dto, Guid userId);
     Task<CustomerSubscriptionResponseDto>              AssignCustomerAsync(Guid subscriptionId, AssignCustomerDto dto, Guid userId);
     Task<CustomerSubscriptionResponseDto>              UpdateAsync(Guid id, CustomerSubscriptionUpdateDto dto);

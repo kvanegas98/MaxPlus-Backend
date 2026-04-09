@@ -18,4 +18,7 @@ public interface IWhatsAppService
 
     Task SendExpirationReminderAsync(string toPhone, string customerName,
         string accessUser, string accessPassword, int daysRemaining);
+
+    Task SendPendingServicesAsync(string toPhone, string customerName,
+        IEnumerable<string> pendingServices);
 }

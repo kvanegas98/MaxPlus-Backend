@@ -33,11 +33,14 @@ public class CustomerSubscriptionRepository : ICustomerSubscriptionRepository
             commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<CustomerSubscription>> GetUnassignedAsync()
+    public async Task<IEnumerable<CustomerSubscription>> GetUnassignedAsync(Guid? tipoServicioId = null)
     {
         using var connection = _connectionFactory.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@TipoServicioId", tipoServicioId);
         return await connection.QueryAsync<CustomerSubscription>(
             "sp_Subscriptions_ObtenerSinAsignar",
+            parameters,
             commandType: CommandType.StoredProcedure);
     }
 

@@ -6,7 +6,7 @@ public interface ICustomerSubscriptionRepository
 {
     Task<IEnumerable<CustomerSubscription>> GetByCustomerIdAsync(Guid customerId);
     Task<IEnumerable<CustomerSubscription>> GetActiveAsync();
-    Task<IEnumerable<CustomerSubscription>> GetUnassignedAsync();
+    Task<IEnumerable<CustomerSubscription>> GetUnassignedAsync(Guid? tipoServicioId = null);
     Task<CustomerSubscription?>             GetByIdAsync(Guid id);
     Task<IEnumerable<CustomerSubscription>> GetExpiringAsync(int daysAhead);
     Task<Guid>                              AddAsync(CustomerSubscription subscription);

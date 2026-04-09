@@ -22,8 +22,10 @@ public class InvoiceRepository : IInvoiceRepository
         var detailsJson = JsonSerializer.Serialize(invoice.Details.Select(d => new
         {
             TipoServicioId = d.TipoServicioId,
+            SubscriptionId = d.SubscriptionId,
             Concepto       = d.Concept,
             Cantidad       = d.Quantity,
+            DurationMonths = d.DurationMonths,
             PrecioUnitario = d.UnitPrice,
             Descuento      = d.DiscountAmount,
             SubTotal       = d.SubTotal,

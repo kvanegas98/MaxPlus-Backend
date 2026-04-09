@@ -17,4 +17,6 @@ public class ServiceOrder
     public string?  RejectionReason { get; set; }
     public string?  IpAddress       { get; set; }
     public DateTime CreatedAt       { get; set; }
+    public int      ItemCount       { get; set; } // JOIN: cantidad de items del carrito
+    public List<ServiceOrderItem> Items { get; set; } = [];
 }

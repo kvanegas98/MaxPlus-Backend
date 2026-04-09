@@ -111,6 +111,30 @@ public class GreenApiWhatsAppService : IWhatsAppService
     }
 
     // ─────────────────────────────────────────────
+    // Servicios pendientes (aprobación parcial)
+    // ─────────────────────────────────────────────
+    public async Task SendPendingServicesAsync(string toPhone, string customerName,
+        IEnumerable<string> pendingServices)
+    {
+        var lista = string.Join("\n", pendingServices.Select(s => $"• {s}"));
+
+        var mensaje = $"""
+            Hola {customerName} 👋
+
+            ✅ Hemos procesado parte de tu pedido.
+
+            ⏳ *Los siguientes servicios están en espera de disponibilidad:*
+            {lista}
+
+            Te contactaremos en cuanto estén listos. ¡Gracias por tu paciencia!
+
+            _MaxPlus IPTV_
+            """.Trim();
+
+        await SendMessageAsync(FormatChatId(toPhone), mensaje);
+    }
+
+    // ─────────────────────────────────────────────
     // Helpers internos
     // ─────────────────────────────────────────────
     private async Task SendMessageAsync(string chatId, string message)

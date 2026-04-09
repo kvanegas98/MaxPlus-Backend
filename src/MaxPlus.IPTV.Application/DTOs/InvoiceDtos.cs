@@ -31,12 +31,18 @@ public class InvoiceDetailCreateDto
 {
     public Guid?   TipoServicioId { get; set; }
 
+    // Suscripción Unassigned a activar con esta línea de factura
+    public Guid?   SubscriptionId { get; set; }
+
     [Required(ErrorMessage = "El concepto es requerido.")]
     [MaxLength(255, ErrorMessage = "El concepto no puede exceder los 255 caracteres.")]
     public string  Concept        { get; set; } = string.Empty;
 
     [Range(1, 1000, ErrorMessage = "La cantidad debe ser mayor a 0.")]
-    public int     Quantity       { get; set; }
+    public int     Quantity        { get; set; }
+
+    [Range(1, 24, ErrorMessage = "DurationMonths debe estar entre 1 y 24.")]
+    public int     DurationMonths  { get; set; } = 1;
 
     public decimal UnitPrice      { get; set; }
     public decimal DiscountAmount { get; set; }

@@ -17,6 +17,7 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
     private readonly IPlataformaConfigRepository     _plataformaConfigRepo;
     private readonly IPdfTicketService               _pdfTicket;
     private readonly IStorageService                 _storage;
+    private readonly IIptvAccountRepository          _iptvAccountRepository;
 
     public CustomerSubscriptionService(
         ICustomerSubscriptionRepository repository,
@@ -27,7 +28,8 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
         IEmailService                   email,
         IPlataformaConfigRepository     plataformaConfigRepo,
         IPdfTicketService               pdfTicket,
-        IStorageService                 storage)
+        IStorageService                 storage,
+        IIptvAccountRepository          iptvAccountRepository)
     {
         _repository            = repository;
         _customerRepository    = customerRepository;
@@ -38,6 +40,7 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
         _plataformaConfigRepo  = plataformaConfigRepo;
         _pdfTicket             = pdfTicket;
         _storage               = storage;
+        _iptvAccountRepository = iptvAccountRepository;
     }
 
     public async Task<IEnumerable<CustomerSubscriptionResponseDto>> GetByCustomerIdAsync(Guid customerId)
@@ -52,9 +55,9 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
         return subs.Select(MapToDto);
     }
 
-    public async Task<IEnumerable<CustomerSubscriptionResponseDto>> GetUnassignedAsync()
+    public async Task<IEnumerable<CustomerSubscriptionResponseDto>> GetUnassignedAsync(Guid? tipoServicioId = null)
     {
-        var subs = await _repository.GetUnassignedAsync();
+        var subs = await _repository.GetUnassignedAsync(tipoServicioId);
         return subs.Select(MapToDto);
     }
 
@@ -237,6 +240,19 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
         var customer = await _customerRepository.GetByIdAsync(original.CustomerId.Value);
         if (customer is not null)
         {
+            // Si la suscripción no tiene credenciales propias, tomarlas de la cuenta IPTV padre
+            string accessUser     = original.AccessUser     ?? string.Empty;
+            string accessPassword = original.AccessPassword ?? string.Empty;
+            if (string.IsNullOrEmpty(accessUser) && original.IptvAccountId.HasValue)
+            {
+                var account = await _iptvAccountRepository.GetByIdAsync(original.IptvAccountId.Value);
+                if (account is not null)
+                {
+                    accessUser     = account.AccessUser;
+                    accessPassword = account.AccessPassword;
+                }
+            }
+
             // Obtener config de plataforma para labelUsuario
             string  serviceName  = original.ServiceName ?? "IPTV";
             string  plataforma   = "IPTV";
@@ -280,8 +296,8 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
                 {
                     await _whatsApp.SendCredentialsAsync(
                         customer.Phone, customer.Name,
-                        original.AccessUser ?? string.Empty,
-                        original.AccessPassword ?? string.Empty,
+                        accessUser,
+                        accessPassword,
                         original.PinCode, dto.NewExpiration,
                         serviceName, labelUsuario, tienePin,
                         invoiceImageUrl: invoiceImageUrl);
@@ -296,8 +312,8 @@ public class CustomerSubscriptionService : ICustomerSubscriptionService
                 {
                     await _email.SendCredentialsAsync(
                         customer.Email, customer.Name,
-                        original.AccessUser ?? string.Empty,
-                        original.AccessPassword ?? string.Empty,
+                        accessUser,
+                        accessPassword,
                         original.PinCode, dto.NewExpiration,
                         serviceName, labelUsuario,
                         original.PlatformUrl,
